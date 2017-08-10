@@ -20,14 +20,15 @@ import (
 	"google.golang.org/grpc"
 )
 
-var listen = flag.String("l", "", "")
-var connections = flag.Int("n", 1, "")
-var concurrency = flag.Int("p", 1, "")
-var clientPayload = flag.Int("c", 10, "")
-var serverPayload = flag.Int("s", 10, "")
-var typ = flag.String("t", "grpc", "")
-var duration = flag.Duration("d", 0, "")
-var cpuprof = flag.String("cpuprof", "", "")
+var listen = flag.String("l", "localhost:50051", "Port to listen on")
+var connections = flag.Int("n", 1, "Number of connections")
+var concurrency = flag.Int("p", 1, "Total concurrency")
+var clientPayload = flag.Int("c", 10, "Client payload")
+var serverPayload = flag.Int("s", 10, "Server payload")
+var typ = flag.String("t", "grpc", "Protocol type")
+var duration = flag.Duration("d", 0, "Duration")
+var cpuprof = flag.String("cpuprof", "", "Profile (cpuprof)")
+var server = flag.Bool("server", false, "Run as server")
 
 type pinger struct {
 	payload []byte
@@ -238,8 +239,7 @@ func udpWorker(conn *net.UDPConn, addr *net.UDPAddr) {
 	}
 }
 
-func doClient() {
-	addr := "localhost:50051"
+func doClient(addr string) {
 	if args := flag.Args(); len(args) > 0 {
 		addr = flag.Arg(0)
 	}
@@ -396,9 +396,9 @@ func main() {
 	grpc.EnableTracing = false
 	flag.Parse()
 
-	if *listen != "" {
+	if *server {
 		doServer(*listen)
 		return
 	}
-	doClient()
+	doClient(*listen)
 }
