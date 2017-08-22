@@ -1,9 +1,11 @@
 GOPATH_BIN     := $(GOPATH)/bin
 PROTOC         := $(GOPATH_BIN)/protoc
 PROTOC_PLUGIN  := $(GOPATH_BIN)/protoc-gen-gogoroach
+GO      			 ?= go
 
 all: ping.pb.go
-	go build -v -i .
+	$(GO) version
+	GOOS=${GOOS} GOARCH=${GOARCH} $(GO) build -v -i .
 
 .PHONY: ping.pb.go
 ping.pb.go:

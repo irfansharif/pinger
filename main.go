@@ -183,7 +183,7 @@ func grpcWorker(c PingerClient) {
 
 func tcpWorker(conn net.Conn) {
 	payload := make([]byte, *clientPayload)
-	buf := make([]byte, 1024)
+	buf := make([]byte, *serverPayload)
 	_, _ = rand.Read(payload)
 
 	for {
@@ -372,7 +372,7 @@ func doClient(addr string) {
 			stats.Unlock()
 
 			cumLatency.Merge(h)
-			p50 := h.ValueAtQuantile(50)
+			p50 := cumLatency.ValueAtQuantile(50)
 			p95 := cumLatency.ValueAtQuantile(95)
 			p99 := cumLatency.ValueAtQuantile(99)
 			pMax := cumLatency.ValueAtQuantile(100)
