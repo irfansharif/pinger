@@ -7,6 +7,8 @@ import (
 	"log"
 	"math"
 	"net"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"runtime/pprof"
@@ -63,6 +65,9 @@ func doServerConn(conn net.Conn) {
 }
 
 func doServer(port string) {
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
 	if *cpuprof != "" {
 		f, err := os.Create(*cpuprof)
 		if err != nil {
@@ -240,6 +245,9 @@ func udpWorker(conn *net.UDPConn, addr *net.UDPAddr) {
 }
 
 func doClient(addr string) {
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6061", nil))
+	}()
 	if args := flag.Args(); len(args) > 0 {
 		addr = flag.Arg(0)
 	}
